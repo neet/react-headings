@@ -1,5 +1,5 @@
 import React from "react";
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 
 import { H, Section, useLevel } from "./index";
 
@@ -34,11 +34,11 @@ describe("useLevel hook", () => {
     );
   });
 
-  it("should be level 6 when at level 7 or more", () => {
+  it("Should have aria-level where heading level is greater than 6", () => {
     function MyComponent() {
       const { level, Component } = useLevel();
 
-      expect(level).toBe(6);
+      expect(level).toBe(8);
       expect(Component).toBe("h6");
 
       return null;
@@ -108,6 +108,30 @@ describe("H component", () => {
 
     expect(headingEl.tagName).toBe("H2");
   });
+
+  it("should have a aria-level attribute where heading level is greater than 6", () => {
+    const { getByRole } = render(
+      <Section component={<H>My H1</H>}>
+        <Section component={<H>My H2</H>}>
+          <Section component={<H>My H3</H>}>
+            <Section component={<H>My H4</H>}>
+              <Section component={<H>My H5</H>}>
+                <Section component={<H>My H6</H>}>
+                  <Section component={<H>My H7</H>}>
+                    Test
+                  </Section>
+                </Section>
+              </Section>
+            </Section>
+          </Section>
+        </Section>
+      </Section>
+    );
+
+    expect(
+      getByRole('heading', { level: 7, name: "My H7" })
+    ).toBeDefined();
+  })
 });
 
 describe("Section component", () => {

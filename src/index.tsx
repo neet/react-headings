@@ -1,8 +1,8 @@
 import React from "react";
 
-type Level = 1 | 2 | 3 | 4 | 5 | 6;
+type Level = number;
 
-type Heading = `h${Level}`;
+type Heading = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 
 type LevelContextValue = { level: Level; Component: Heading };
 
@@ -35,6 +35,10 @@ export function H({ render, ...props }: HProps): JSX.Element {
     return render(context);
   }
 
+  if (context.level > 6) {
+    props['aria-level'] = context.level;
+  }
+
   return <context.Component {...props} />;
 }
 
@@ -51,11 +55,12 @@ type SectionProps = {
 export function Section({ component, children }: SectionProps): JSX.Element {
   const { level } = useLevel();
 
-  const nextLevel = Math.min(level + 1, 6) as Level;
+  const nextLevel = level + 1;
+  const elementType = Math.min(level + 1, 6);
 
   const value = {
     level: nextLevel,
-    Component: `h${nextLevel}` as Heading,
+    Component: `h${elementType}` as Heading,
   };
 
   return (
